@@ -6,9 +6,7 @@ package com.customer.service.controller;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,6 +14,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +34,8 @@ import com.crm.security.JwtUser;
 import com.crm.security.JwtUser.JwtUserType;
 import com.customer.app.service.AdminService;
 import com.customer.app.service.ApprovalService;
+import com.customer.service.events.CSApplicationEventPublisher;
+import com.customer.service.exception.EmployeeAlreadyExistsException;
 import com.customer.service.exception.OrganizationAlreadyExists;
 import com.customer.service.security.SecurityUtility;
 
@@ -56,6 +57,9 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private ApprovalService approvalService;
+
+	@Autowired
+	private CSApplicationEventPublisher eventPublisher;
 
 	@PostMapping("/createOrg")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -164,11 +168,18 @@ public class AdminController extends BaseController {
 
 	@PostMapping("/createEmployee")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-	public ResponseModel createEmployee(@RequestBody Employee employeeObj) {
+	public ResponseModel createEmployee(@Valid @RequestBody Employee employeeObj) {
 		log.info("Trying to create a new employee" + employeeObj.toString());
-		if (adminService.createEmployee(employeeObj)) {
-			return getSuccessResponseModel("Successfully created the employee");
-		} else {
+		try {
+			if (adminService.createEmployee(employeeObj).getId() != null) {
+				eventPublisher.publishEvent(new EmployeeCreatedEvent(employeeObj));
+				return getSuccessResponseModel("Successfully created the employee");
+			} else {
+				return getFailureMessage("Unable to create the employee, check the server logs");
+			}
+		} catch (EmployeeAlreadyExistsException exp) {
+			return getFailureMessage(exp.getMessage(), exp);
+		} catch (Exception exp) {
 			return getFailureMessage("Unable to create the employee, check the server logs");
 		}
 	}

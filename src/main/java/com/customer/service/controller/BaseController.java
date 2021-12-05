@@ -59,6 +59,11 @@ public class BaseController {
 		public MyApplicationEvent(Object source) {
 			super(source);
 		}
-
+	}
+	
+	class EmployeeCreatedEvent extends ApplicationEvent {
+		public EmployeeCreatedEvent(Object source) {
+			super(source);
+		}
 	}
 }

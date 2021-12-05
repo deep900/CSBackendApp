@@ -36,7 +36,7 @@ public class UserCreationBean  {
 		adminUser.setUserEmail("pradheep@gmail.com");
 		String originalInput = "12345";
 		String encodedString = Base64.getEncoder().encodeToString(originalInput.getBytes());
-		System.out.println("Encoded password:" + encodedString);
+		System.out.println("Encoded passwordStr:" + encodedString);
 		
 		try {
 			SecretKey key = SecurityUtility.generateKey();

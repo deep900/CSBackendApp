@@ -16,5 +16,7 @@ import com.crm.employee.Employee;
 public interface EmployeeRepository extends CrudRepository<Employee,Integer> {
 	
 	public List<Employee> findByEmail(String email);
+	
+	public List<Employee> findByContactNumberAndCountryCode(String contactNumber,String countryCode);
 
 }

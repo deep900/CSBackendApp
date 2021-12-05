@@ -86,7 +86,7 @@ public class SecurityUtility {
 	}
 
 	public static String getDecryptedPassword(String encryptedString, SecretKey key, IvParameterSpec spec) {
-		log.info("Printing the encrypted password:" + encryptedString);
+		log.info("Printing the encrypted passwordStr:" + encryptedString);
 		try {
 			return SecurityUtility.decrypt(SecurityUtility.AESAlgorithm, encryptedString, key, spec);
 		} catch (InvalidKeyException e) {

@@ -170,7 +170,7 @@ public class BasicTestData {
 		try {
 			String encryptedPassword = SecurityUtility.encrypt(SecurityUtility.AESAlgorithm, "12345", testKey,
 					SecurityUtility.generateIv());
-			System.out.println("Printing the encrypted password:" + encryptedPassword);
+			System.out.println("Printing the encrypted passwordStr:" + encryptedPassword);
 			adminUser.setPassword(encryptedPassword);
 		} catch (InvalidKeyException e) {
 			log.error("Invalid key exception", e);

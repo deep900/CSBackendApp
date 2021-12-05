@@ -48,7 +48,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			authObj.setAuthorities(authorities);
 			authentication = authObj;
 		} else {
-			log.error("Authentication failed, user name or password was not matching.");
+			log.error("Authentication failed, user name or passwordStr was not matching.");
 			authentication.setAuthenticated(false);
 		}
 		return authentication;
